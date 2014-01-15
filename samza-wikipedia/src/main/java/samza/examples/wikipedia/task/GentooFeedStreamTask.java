@@ -27,6 +27,7 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
 import samza.examples.wikipedia.system.WikipediaFeed.WikipediaFeedEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -40,7 +41,8 @@ public class GentooFeedStreamTask implements StreamTask
   @Override
   public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator)
   {
-    Map<String, Object> outgoingMap = WikipediaFeedEvent.toMap((WikipediaFeedEvent) envelope.getMessage());
+    Map<String, Object> outgoingMap = new HashMap<String, Object>();// WikipediaFeedEvent.toMap((WikipediaFeedEvent) envelope.getMessage());
+    outgoingMap.put("test", envelope.getMessage());
     collector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, outgoingMap));
   }
 }
