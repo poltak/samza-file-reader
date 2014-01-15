@@ -19,10 +19,6 @@
 
 package samza.examples.wikipedia.task;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -31,31 +27,44 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
 import samza.examples.wikipedia.system.WikipediaFeed.WikipediaFeedEvent;
 
-public class WikipediaParserStreamTask implements StreamTask {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class WikipediaParserStreamTask implements StreamTask
+{
+  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "wikipedia-edits");
+
   @SuppressWarnings("unchecked")
   @Override
-  public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+  public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator)
+  {
     Map<String, Object> jsonObject = (Map<String, Object>) envelope.getMessage();
     WikipediaFeedEvent event = new WikipediaFeedEvent(jsonObject);
 
-    try {
+    try
+    {
       Map<String, Object> parsedJsonObject = parse(event.getRawEvent());
 
       parsedJsonObject.put("channel", event.getChannel());
       parsedJsonObject.put("source", event.getSource());
       parsedJsonObject.put("time", event.getTime());
 
-      collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "wikipedia-edits"), parsedJsonObject));
-    } catch (Exception e) {
+      collector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJsonObject));
+    } catch (Exception e)
+    {
       System.err.println("Unable to parse line: " + event);
     }
   }
 
-  public static Map<String, Object> parse(String line) {
+  public static Map<String, Object> parse(String line)
+  {
     Pattern p = Pattern.compile("\\[\\[(.*)\\]\\]\\s(.*)\\s(.*)\\s\\*\\s(.*)\\s\\*\\s\\(\\+?(.\\d*)\\)\\s(.*)");
     Matcher m = p.matcher(line);
 
-    if (m.find() && m.groupCount() == 6) {
+    if (m.find() && m.groupCount() == 6)
+    {
       String title = m.group(1);
       String flags = m.group(2);
       String diffUrl = m.group(3);
@@ -83,15 +92,21 @@ public class WikipediaParserStreamTask implements StreamTask {
       root.put("flags", flagMap);
 
       return root;
-    } else {
+    }
+    else
+    {
       throw new IllegalArgumentException();
     }
   }
 
-  public static void main(String[] args) {
-    String[] lines = new String[] { "[[Wikipedia talk:Articles for creation/Lords of War]]  http://en.wikipedia.org/w/index.php?diff=562991653&oldid=562991567 * BBGLordsofWar * (+95) /* Lords of War: Elves versus Lizardmen */]", "[[David Shepard (surgeon)]] M http://en.wikipedia.org/w/index.php?diff=562993463&oldid=562989820 * Jacobsievers * (+115) /* American Revolution (1775�1783) */  Added to note regarding David Shepard's brothers" };
+  public static void main(String[] args)
+  {
+    String[] lines = new String[]{
+        "[[Wikipedia talk:Articles for creation/Lords of War]]  http://en.wikipedia.org/w/index.php?diff=562991653&oldid=562991567 * BBGLordsofWar * (+95) /* Lords of War: Elves versus Lizardmen */]",
+        "[[David Shepard (surgeon)]] M http://en.wikipedia.org/w/index.php?diff=562993463&oldid=562989820 * Jacobsievers * (+115) /* American Revolution (1775�1783) */  Added to note regarding David Shepard's brothers"};
 
-    for (String line : lines) {
+    for (String line : lines)
+    {
       System.out.println(parse(line));
     }
   }

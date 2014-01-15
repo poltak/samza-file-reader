@@ -19,10 +19,6 @@
 
 package samza.examples.wikipedia.task;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
@@ -31,15 +27,24 @@ import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
 import org.apache.samza.task.WindowableTask;
 
-public class WikipediaStatsStreamTask implements StreamTask, WindowableTask {
-  private int edits = 0;
-  private int byteDiff = 0;
-  private Set<String> titles = new HashSet<String>();
-  private Map<String, Integer> counts = new HashMap<String, Integer>();
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class WikipediaStatsStreamTask implements StreamTask, WindowableTask
+{
+  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "wikipedia-stats");
+
+  private int                  edits    = 0;
+  private int                  byteDiff = 0;
+  private Set<String>          titles   = new HashSet<String>();
+  private Map<String, Integer> counts   = new HashMap<String, Integer>();
 
   @SuppressWarnings("unchecked")
   @Override
-  public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator) {
+  public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator)
+  {
     Map<String, Object> edit = (Map<String, Object>) envelope.getMessage();
     Map<String, Boolean> flags = (Map<String, Boolean>) edit.get("flags");
 
@@ -47,11 +52,14 @@ public class WikipediaStatsStreamTask implements StreamTask, WindowableTask {
     titles.add((String) edit.get("title"));
     byteDiff += (Integer) edit.get("diff-bytes");
 
-    for (Map.Entry<String, Boolean> flag : flags.entrySet()) {
-      if (Boolean.TRUE.equals(flag.getValue())) {
+    for (Map.Entry<String, Boolean> flag : flags.entrySet())
+    {
+      if (Boolean.TRUE.equals(flag.getValue()))
+      {
         Integer count = counts.get(flag.getKey());
 
-        if (count == null) {
+        if (count == null)
+        {
           count = 0;
         }
 
@@ -62,12 +70,13 @@ public class WikipediaStatsStreamTask implements StreamTask, WindowableTask {
   }
 
   @Override
-  public void window(MessageCollector collector, TaskCoordinator coordinator) {
+  public void window(MessageCollector collector, TaskCoordinator coordinator)
+  {
     counts.put("edits", edits);
     counts.put("bytes-added", byteDiff);
     counts.put("unique-titles", titles.size());
 
-    collector.send(new OutgoingMessageEnvelope(new SystemStream("kafka", "wikipedia-stats"), counts));
+    collector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, counts));
 
     // Reset counts after windowing.
     edits = 0;

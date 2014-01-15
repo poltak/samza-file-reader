@@ -28,14 +28,17 @@ import org.apache.samza.system.SystemFactory;
 import org.apache.samza.system.SystemProducer;
 import org.apache.samza.util.SinglePartitionSystemAdmin;
 
-public class WikipediaSystemFactory implements SystemFactory {
+public class WikipediaSystemFactory implements SystemFactory
+{
   @Override
-  public SystemAdmin getAdmin(String systemName, Config config) {
+  public SystemAdmin getAdmin(String systemName, Config config)
+  {
     return new SinglePartitionSystemAdmin();
   }
 
   @Override
-  public SystemConsumer getConsumer(String systemName, Config config, MetricsRegistry registry) {
+  public SystemConsumer getConsumer(String systemName, Config config, MetricsRegistry registry)
+  {
     String host = config.get("systems." + systemName + ".host");
     int port = config.getInt("systems." + systemName + ".port");
     WikipediaFeed feed = new WikipediaFeed(host, port);
@@ -44,7 +47,8 @@ public class WikipediaSystemFactory implements SystemFactory {
   }
 
   @Override
-  public SystemProducer getProducer(String systemName, Config config, MetricsRegistry registry) {
+  public SystemProducer getProducer(String systemName, Config config, MetricsRegistry registry)
+  {
     throw new SamzaException("You can't produce to a Wikipedia feed! How about making some edits to a Wiki, instead?");
   }
 }
