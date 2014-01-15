@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by poltak on 15/01/2014.
  */
-public class GentooFeedParserStreamTask implements StreamTask
+public class GentooParserStreamTask implements StreamTask
 {
   private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "gentoo-parsed");
 
