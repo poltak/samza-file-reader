@@ -25,10 +25,8 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
-import samza.examples.wikipedia.system.WikipediaFeed;
 import samza.examples.wikipedia.system.WikipediaFeed.WikipediaFeedEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
