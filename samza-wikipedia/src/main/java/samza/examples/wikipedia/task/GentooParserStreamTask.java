@@ -17,6 +17,7 @@ public class GentooParserStreamTask implements StreamTask
 {
   private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "gentoo-parsed");
 
+  @SuppressWarnings("unchecked")
   @Override
   public void process(final IncomingMessageEnvelope incomingMessageEnvelope, final MessageCollector messageCollector,
                       final TaskCoordinator taskCoordinator) throws Exception
