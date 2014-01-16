@@ -32,9 +32,9 @@ import java.util.Map;
 /**
  * Created by poltak on 15/01/2014.
  */
-public class GentooParserStreamTask implements StreamTask
+public class FreenodeParserStreamTask implements StreamTask
 {
-  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "gentoo-parsed");
+  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "freenode-parsed");
 
   @SuppressWarnings("unchecked")
   @Override
@@ -55,6 +55,7 @@ public class GentooParserStreamTask implements StreamTask
     {
       Long time = (Long) jsonObject.get("time");
       Date date = new Date(time);
+
       parsedJson = "At "
                    + date.toString()
                    + ", "
@@ -63,6 +64,7 @@ public class GentooParserStreamTask implements StreamTask
                    + jsonObject.get("channel")
                    + ": '"
                    + jsonObject.get("raw") + "'";
+
     } catch (NumberFormatException e)
     {
       parsedJson = "Bad epoch long!";
@@ -70,6 +72,7 @@ public class GentooParserStreamTask implements StreamTask
     {
       parsedJson = "Big error!!!";
     }
+
     return parsedJson;
   }
 }

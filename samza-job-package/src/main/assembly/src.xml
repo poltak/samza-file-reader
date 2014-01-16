@@ -52,12 +52,12 @@
       <filtered>true</filtered>
     </file>
     <file>
-      <source>${basedir}/src/main/config/gentoo-feed.properties</source>
+      <source>${basedir}/src/main/config/freenode-feed.properties</source>
       <outputDirectory>config</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
-      <source>${basedir}/src/main/config/gentoo-parser.properties</source>
+      <source>${basedir}/src/main/config/freenode-parser.properties</source>
       <outputDirectory>config</outputDirectory>
       <filtered>true</filtered>
     </file>

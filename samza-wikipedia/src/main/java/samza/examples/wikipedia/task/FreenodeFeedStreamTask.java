@@ -33,9 +33,9 @@ import java.util.Map;
  * This task is very simple. All it does is take messages that it receives, and sends them to a Kafka topic called
  * wikipedia-raw.
  */
-public class GentooFeedStreamTask implements StreamTask
+public class FreenodeFeedStreamTask implements StreamTask
 {
-  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "gentoo-raw");
+  private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "freenode-raw");
 
   @Override
   public void process(IncomingMessageEnvelope envelope, MessageCollector collector, TaskCoordinator coordinator)
