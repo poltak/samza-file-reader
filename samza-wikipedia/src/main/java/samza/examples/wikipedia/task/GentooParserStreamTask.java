@@ -47,18 +47,22 @@ public class GentooParserStreamTask implements StreamTask
     messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJson));
   }
 
-  private String parseJsonToString(Map<String, Object> jsonObject)
+  private String parseJsonToString(final Map<String, Object> jsonObject)
   {
-    Date date = new Date(Long.parseLong((String) jsonObject.get("time")));
     String parsedJson;
     try
     {
+      Long time = (Long) jsonObject.get("time");
+      Date date = new Date(time);
       parsedJson = "At "
                    + date.toString()
                    + ", "
                    + jsonObject.get("source")
                    + " said:    '"
                    + jsonObject.get("raw") + "'";
+    } catch (NumberFormatException e)
+    {
+      parsedJson = "Bad epoch long!";
     } catch (Exception e)
     {
       parsedJson = "Big error!!!";
