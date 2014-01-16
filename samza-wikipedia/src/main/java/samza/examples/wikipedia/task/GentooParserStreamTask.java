@@ -44,6 +44,7 @@ public class GentooParserStreamTask implements StreamTask
     Map<String, Object> jsonObject = (Map<String, Object>) incomingMessageEnvelope.getMessage();
 
     String parsedJson = parseJsonToString(jsonObject);
+
     messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJson));
   }
 
@@ -58,7 +59,9 @@ public class GentooParserStreamTask implements StreamTask
                    + date.toString()
                    + ", "
                    + jsonObject.get("source")
-                   + " said:    '"
+                   + " said in "
+                   + jsonObject.get("channel")
+                   + ": '"
                    + jsonObject.get("raw") + "'";
     } catch (NumberFormatException e)
     {
