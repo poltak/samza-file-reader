@@ -26,6 +26,7 @@ import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -42,19 +43,26 @@ public class GentooParserStreamTask implements StreamTask
   {
     Map<String, Object> jsonObject = (Map<String, Object>) incomingMessageEnvelope.getMessage();
 
+    String parsedJson = parseJsonToString(jsonObject);
+    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJson));
+  }
+
+  private String parseJsonToString(Map<String, Object> jsonObject)
+  {
+    Date date = new Date(Long.parseLong((String) jsonObject.get("time")));
     String parsedJson;
     try
     {
-      parsedJson = "at "
-                   + jsonObject.get("time")
+      parsedJson = "At "
+                   + date.toString()
                    + ", "
                    + jsonObject.get("source")
-                   + " said:\n"
-                   + jsonObject.get("raw");
+                   + " said:    '"
+                   + jsonObject.get("raw") + "'";
     } catch (Exception e)
     {
       parsedJson = "Big error!!!";
     }
-    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJson));
+    return parsedJson;
   }
 }
