@@ -25,8 +25,6 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
-import samza.examples.wikipedia.system.WikipediaFeed;
-import samza.examples.wikipedia.system.WikipediaFeed.WikipediaFeedEvent;
 
 import java.util.Map;
 
@@ -43,14 +41,20 @@ public class GentooParserStreamTask implements StreamTask
                       final TaskCoordinator taskCoordinator) throws Exception
   {
     Map<String, Object> jsonObject = (Map<String, Object>) incomingMessageEnvelope.getMessage();
-    WikipediaFeedEvent event = new WikipediaFeed.WikipediaFeedEvent(jsonObject);
 
-    String parsedJson = "at "
-                        + String.valueOf(event.getTime())
-                        + ", "
-                        + event.getSource()
-                        + " said:\n"
-                        + event.getRawEvent();
-    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, incomingMessageEnvelope.getMessage()));
+    String parsedJson;
+    try
+    {
+      parsedJson = "at "
+                   + jsonObject.get("time")
+                   + ", "
+                   + jsonObject.get("source")
+                   + " said:\n"
+                   + jsonObject.get("raw");
+    } catch (Exception e)
+    {
+      parsedJson = "Big error!!!";
+    }
+    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, parsedJson));
   }
 }
