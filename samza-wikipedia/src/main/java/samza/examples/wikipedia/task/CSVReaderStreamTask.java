@@ -25,12 +25,11 @@ import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.MessageCollector;
 import org.apache.samza.task.StreamTask;
 import org.apache.samza.task.TaskCoordinator;
-import org.supercsv.io.CsvListReader;
-import org.supercsv.prefs.CsvPreference;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.LinkedList;
+import java.io.IOException;
 
 public class CSVReaderStreamTask implements StreamTask
 {
@@ -38,14 +37,36 @@ public class CSVReaderStreamTask implements StreamTask
 
   @Override
   public void process(final IncomingMessageEnvelope incomingMessageEnvelope, final MessageCollector messageCollector,
-                      final TaskCoordinator taskCoordinator) throws Exception
+                      final TaskCoordinator taskCoordinator)
   {
-    BufferedReader bufferedReader = new BufferedReader(new FileReader(System.getenv("HOME") + "/test.csv"));
-    String line;
-
-    while ((line = bufferedReader.readLine()) != null)
+    BufferedReader bufferedReader = null;
+    try
     {
-      messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, line));
+      bufferedReader = new BufferedReader(new FileReader("/N/u/poltak/test.csv"));
+
+      String line;
+      while ((line = bufferedReader.readLine()) != null)
+      {
+        messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, line));
+      }
+    } catch (FileNotFoundException e)
+    {
+      messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, "file not found"));
+    } catch (IOException e)
+    {
+      messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, "error reading from opened file"));
+    } finally
+    {
+      try
+      {
+        if (bufferedReader != null)
+        {
+          bufferedReader.close();
+        }
+      } catch (IOException e)
+      {
+        messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, "file cannot be closed"));
+      }
     }
   }
 }
