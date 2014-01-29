@@ -41,7 +41,7 @@ public class MedicalDataConsumer implements SystemConsumer
   {
     this.fileReader = new FileReader(pathToInputFile);
 
-    this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(1));
+    this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
   }
 
   @Override
