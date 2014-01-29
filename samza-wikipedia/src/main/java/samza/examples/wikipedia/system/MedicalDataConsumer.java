@@ -30,17 +30,18 @@ import java.util.Map;
 
 public class MedicalDataConsumer implements SystemConsumer
 {
+  private static final String SYSTEM_NAME = "medicaldata";
+  private static final String STREAM_NAME = "test";
+
   private final SystemStreamPartition ssp;
-  private       Reader          fileReader;
+  private final Reader          fileReader;
   private       BufferedReader  bufferedReader;
 
   public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
     this.fileReader = new FileReader(pathToInputFile);
 
-    String[] path = pathToInputFile.split("/");
-
-    this.ssp = new SystemStreamPartition(systemName, "test", new Partition(0));
+    this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
   }
 
   @Override

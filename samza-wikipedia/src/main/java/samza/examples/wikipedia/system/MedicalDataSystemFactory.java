@@ -35,7 +35,6 @@ public class MedicalDataSystemFactory implements SystemFactory
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
     String pathToInputFile = config.get("systems." + systemName + ".inputpath");
-    //MedicalDataFeed feed = new MedicalDataFeed(pathToInputFile);
 
     try
     {
