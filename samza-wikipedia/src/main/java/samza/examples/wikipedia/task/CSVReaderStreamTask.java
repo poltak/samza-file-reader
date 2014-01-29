@@ -40,7 +40,7 @@ public class CSVReaderStreamTask implements StreamTask
   public void process(final IncomingMessageEnvelope incomingMessageEnvelope, final MessageCollector messageCollector,
                       final TaskCoordinator taskCoordinator) throws Exception
   {
-    BufferedReader bufferedReader = new BufferedReader(new FileReader(System.getenv("PWD") + "/test.csv"));
+    BufferedReader bufferedReader = new BufferedReader(new FileReader(System.getenv("HOME") + "/test.csv"));
     String line;
 
     while ((line = bufferedReader.readLine()) != null)
