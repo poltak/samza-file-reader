@@ -36,11 +36,11 @@ public class MedicalDataConsumer implements SystemConsumer
 
   public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
-   this.fileReader = new FileReader(pathToInputFile);
+    this.fileReader = new FileReader(pathToInputFile);
 
     String[] path = pathToInputFile.split("/");
 
-    this.ssp = new SystemStreamPartition(systemName, path[path.length - 1], new Partition(0));
+    this.ssp = new SystemStreamPartition(systemName, "test", new Partition(0));
   }
 
   @Override
