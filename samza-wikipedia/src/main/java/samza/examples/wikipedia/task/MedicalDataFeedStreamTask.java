@@ -50,8 +50,7 @@ public class MedicalDataFeedStreamTask implements StreamTask
     {
       dataReceived = "bad data";
     }
-    //messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, dataReceived));
-    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, "hi"));
+    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, dataReceived));
   }
 
   private MedicalData parseLineOfData(final String line) throws InvalidMedicalDataException, ParseException
