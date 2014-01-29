@@ -22,22 +22,25 @@ package samza.examples.wikipedia.task;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskCoordinator;
+import org.apache.samza.task.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class CSVReaderStreamTask implements StreamTask
+public class CSVReaderStreamTask implements WindowableTask, StreamTask
 {
   private static final SystemStream OUTPUT_STREAM = new SystemStream("kafka", "test-input");
 
   @Override
   public void process(final IncomingMessageEnvelope incomingMessageEnvelope, final MessageCollector messageCollector,
                       final TaskCoordinator taskCoordinator)
+  {
+  }
+
+  @Override
+  public void window(final MessageCollector messageCollector, final TaskCoordinator taskCoordinator) throws Exception
   {
     BufferedReader bufferedReader = null;
     try
