@@ -75,15 +75,16 @@ public class MedicalDataConsumer implements SystemConsumer
     List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
 
     String line;
-    try
-    {
-      if ((line = bufferedReader.readLine()) != null)
-      {
-        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
-      }
-    } catch (IOException ignored)
-    {
-    }
+//    try
+//    {
+//      if ((line = bufferedReader.readLine()) != null)
+//      {
+//        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+//      }
+//    } catch (IOException ignored)
+//    {
+//    }
+    list.add(new IncomingMessageEnvelope(ssp, "", null, "hi"));
     return list;
   }
 }
