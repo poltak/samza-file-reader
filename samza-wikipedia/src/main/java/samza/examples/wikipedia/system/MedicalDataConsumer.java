@@ -20,55 +20,69 @@ package samza.examples.wikipedia.system;
 
 import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
+import org.apache.samza.system.SystemConsumer;
 import org.apache.samza.system.SystemStreamPartition;
-import org.apache.samza.util.BlockingEnvelopeMap;
-import samza.examples.wikipedia.system.MedicalDataFeed.MedicalDataFeedEvent;
-import samza.examples.wikipedia.system.MedicalDataFeed.MedicalDataFeedListener;
 
-public class MedicalDataConsumer extends BlockingEnvelopeMap implements MedicalDataFeedListener
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class MedicalDataConsumer implements SystemConsumer
 {
-  private final String          systemName;
-  private final MedicalDataFeed feed;
+  private final SystemStreamPartition ssp;
+  private       Reader          fileReader;
+  private       BufferedReader  bufferedReader;
 
-  public MedicalDataConsumer(final String systemName, final MedicalDataFeed feed)
+  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
-    this.systemName = systemName;
-    this.feed = feed;
-  }
+   this.fileReader = new FileReader(pathToInputFile);
 
-  public void onEvent(final MedicalDataFeedEvent event)
-  {
-    SystemStreamPartition systemStreamPartition =
-        new SystemStreamPartition(systemName, event.getInputFileName(), new Partition(0));
+    String[] path = pathToInputFile.split("/");
 
-    try
-    {
-      put(systemStreamPartition,
-          new IncomingMessageEnvelope(systemStreamPartition, null, null, event));
-    } catch (InterruptedException e)
-    {
-      // TODO
-      e.printStackTrace();
-    }
+    this.ssp = new SystemStreamPartition(systemName, path[path.length - 1], new Partition(0));
   }
 
   @Override
   public void start()
   {
-    feed.start();
-    feed.listen(this);
+    this.bufferedReader = new BufferedReader(fileReader);
   }
 
   @Override
   public void stop()
   {
-    feed.unlisten(this);
-    feed.stop();
+    try
+    {
+      this.bufferedReader.close();
+    } catch (IOException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
   {
-    super.register(systemStreamPartition, startingOffset);
+  }
+
+  @Override
+  public List<IncomingMessageEnvelope> poll(final Map<SystemStreamPartition, Integer> systemStreamPartitionIntegerMap,
+                                            final long l)
+      throws InterruptedException
+  {
+    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
+
+    String line;
+    try
+    {
+      if ((line = bufferedReader.readLine()) != null)
+      {
+        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+      }
+    } catch (IOException ignored)
+    {
+    }
+    return list;
   }
 }

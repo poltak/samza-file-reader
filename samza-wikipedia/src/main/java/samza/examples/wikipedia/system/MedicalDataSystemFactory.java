@@ -27,14 +27,23 @@ import org.apache.samza.system.SystemFactory;
 import org.apache.samza.system.SystemProducer;
 import org.apache.samza.util.SinglePartitionSystemAdmin;
 
+import java.io.FileNotFoundException;
+
 public class MedicalDataSystemFactory implements SystemFactory
 {
   @Override
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
-    MedicalDataFeed feed = new MedicalDataFeed(config.get("systems." + systemName + ".host"));
+    String pathToInputFile = config.get("systems." + systemName + ".inputpath");
+    //MedicalDataFeed feed = new MedicalDataFeed(pathToInputFile);
 
-    return new MedicalDataConsumer(systemName, feed);
+    try
+    {
+      return new MedicalDataConsumer(systemName, pathToInputFile);
+    } catch (FileNotFoundException e)
+    {
+      return null;
+    }
   }
 
   @Override
