@@ -41,16 +41,17 @@ public class MedicalDataFeedStreamTask implements StreamTask
   public void process(final IncomingMessageEnvelope incomingMessageEnvelope, final MessageCollector messageCollector,
                       final TaskCoordinator taskCoordinator)
   {
-    Object dataReceived;
-    try
-    {
-      // TODO: check that a String is actually received
-      dataReceived = parseLineOfData((String) incomingMessageEnvelope.getMessage());
-    } catch (Exception e)
-    {
-      dataReceived = "bad data";
-    }
-    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, dataReceived));
+//    Object dataReceived;
+//    try
+//    {
+//      // TODO: check that a String is actually received
+//      dataReceived = parseLineOfData((String) incomingMessageEnvelope.getMessage());
+//    } catch (Exception e)
+//    {
+//      dataReceived = "bad data";
+//    }
+//    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, dataReceived));
+    messageCollector.send(new OutgoingMessageEnvelope(OUTPUT_STREAM, incomingMessageEnvelope.getMessage()));
   }
 
   private MedicalData parseLineOfData(final String line) throws InvalidMedicalDataException, ParseException
