@@ -20,14 +20,10 @@ package samza.examples.wikipedia.system;
 
 import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.SystemConsumer;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.util.BlockingEnvelopeMap;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MedicalDataConsumer extends BlockingEnvelopeMap
 {
@@ -50,6 +46,15 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   }
 
   /**
+   * Not sure if this is entirely necessary for what I want to do. If it is, it's probably a big problem.
+   */
+  @Override
+  public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
+  {
+    super.register(systemStreamPartition, startingOffset);
+  }
+
+  /**
    * What is done at the initialisation of this SystemConsumer (?)
    */
   @Override
@@ -57,16 +62,16 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   {
     this.bufferedReader = new BufferedReader(fileReader);
 
-    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
+//    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
 
     String line;
     try
     {
       while ((line = bufferedReader.readLine()) != null)
       {
-        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+        IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, line);
+        put(ssp, message);
       }
-      putAll(ssp, list);
     } catch (IOException e)
     {
       e.printStackTrace();
@@ -89,15 +94,6 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * Not sure if this is entirely necessary for what I want to do. If it is, it's probably a big problem.
-   */
-  @Override
-  public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
-  {
-    super.register(systemStreamPartition, startingOffset);
   }
 
   /**
