@@ -22,13 +22,14 @@ import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemConsumer;
 import org.apache.samza.system.SystemStreamPartition;
+import org.apache.samza.util.BlockingEnvelopeMap;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MedicalDataConsumer implements SystemConsumer
+public class MedicalDataConsumer extends BlockingEnvelopeMap
 {
   private static final String SYSTEM_NAME = "medicaldata";
   private static final String STREAM_NAME = "test";
@@ -55,6 +56,24 @@ public class MedicalDataConsumer implements SystemConsumer
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
+
+    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
+
+    String line;
+    try
+    {
+      while ((line = bufferedReader.readLine()) != null)
+      {
+        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+      }
+      putAll(ssp, list);
+    } catch (IOException e)
+    {
+      e.printStackTrace();
+    } catch (InterruptedException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -78,6 +97,7 @@ public class MedicalDataConsumer implements SystemConsumer
   @Override
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
   {
+    super.register(systemStreamPartition, startingOffset);
   }
 
   /**
@@ -87,24 +107,24 @@ public class MedicalDataConsumer implements SystemConsumer
    * @param l Not used in this example.
    * @return List of IncomingMessageEnvelopes which are then put onto their specific SystemStreamPartition (?)
    */
-  @Override
-  public List<IncomingMessageEnvelope> poll(final Map<SystemStreamPartition, Integer> systemStreamPartitionIntegerMap,
-                                            final long l)
-      throws InterruptedException
-  {
-    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
-
-    String line;
-    try
-    {
-      if ((line = bufferedReader.readLine()) != null)
-      {
-        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
-      }
-    } catch (IOException e)
-    {
-      throw new InterruptedException(e.getMessage());
-    }
-    return list;
-  }
+//  @Override
+//  public List<IncomingMessageEnvelope> poll(final Map<SystemStreamPartition, Integer> systemStreamPartitionIntegerMap,
+//                                            final long l)
+//      throws InterruptedException
+//  {
+//    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
+//
+//    String line;
+//    try
+//    {
+//      if ((line = bufferedReader.readLine()) != null)
+//      {
+//        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+//      }
+//    } catch (IOException e)
+//    {
+//      throw new InterruptedException(e.getMessage());
+//    }
+//    return list;
+//  }
 }
