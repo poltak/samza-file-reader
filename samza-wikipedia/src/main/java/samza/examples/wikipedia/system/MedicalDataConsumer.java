@@ -30,6 +30,7 @@ import java.util.Map;
 
 public class MedicalDataConsumer implements SystemConsumer
 {
+  // TODO: Don't actually hard-code these!!!; change them back after working
   private static final String SYSTEM_NAME = "medicaldata";
   private static final String STREAM_NAME = "test";
 
@@ -75,16 +76,15 @@ public class MedicalDataConsumer implements SystemConsumer
     List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
 
     String line;
-//    try
-//    {
-//      if ((line = bufferedReader.readLine()) != null)
-//      {
-//        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
-//      }
-//    } catch (IOException ignored)
-//    {
-//    }
-    list.add(new IncomingMessageEnvelope(ssp, "", null, "hi"));
+    try
+    {
+      if ((line = bufferedReader.readLine()) != null)
+      {
+        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
+      }
+    } catch (IOException ignored)
+    {
+    }
     return list;
   }
 }

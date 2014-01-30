@@ -34,6 +34,7 @@ public class MedicalDataSystemFactory implements SystemFactory
   @Override
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
+    // TODO: Don't actually hardcode this!!! Use systemName parameter
     String pathToInputFile = config.get("systems.medicaldata.inputpath");
 
     try
