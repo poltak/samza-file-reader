@@ -41,6 +41,12 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   {
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
+    try{
+      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "HI"));
+    } catch (InterruptedException e)
+    {
+      e.printStackTrace();
+    }
 
     try
     {
