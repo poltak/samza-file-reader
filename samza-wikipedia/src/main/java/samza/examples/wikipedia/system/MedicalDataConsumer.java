@@ -101,8 +101,9 @@ public class MedicalDataConsumer implements SystemConsumer
       {
         list.add(new IncomingMessageEnvelope(ssp, "", null, line));
       }
-    } catch (IOException ignored)
+    } catch (IOException e)
     {
+      throw new InterruptedException(e.getMessage()));
     }
     return list;
   }
