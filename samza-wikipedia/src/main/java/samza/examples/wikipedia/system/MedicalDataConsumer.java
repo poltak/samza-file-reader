@@ -103,7 +103,7 @@ public class MedicalDataConsumer implements SystemConsumer
       }
     } catch (IOException e)
     {
-      throw new InterruptedException(e.getMessage()));
+      throw new InterruptedException(e.getMessage());
     }
     return list;
   }
