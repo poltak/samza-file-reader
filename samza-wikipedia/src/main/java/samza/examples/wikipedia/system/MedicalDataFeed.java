@@ -29,6 +29,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * THIS CLASS IS NOT CURRENTLY USED
+ */
 public class MedicalDataFeed
 {
   private static final ObjectMapper jsonMapper = new ObjectMapper();

@@ -31,42 +31,33 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   private static final String STREAM_NAME = "test";
 
   private final SystemStreamPartition ssp;
-  private       Reader                fileReader;
+  private final Reader                fileReader;
   private       BufferedReader        bufferedReader;
 
   /**
    * Sets up the SystemStreamPartition and FileReader.
+   * Also sends a test message saying "THIS IS A TEST" to the SSP.
    */
-  public MedicalDataConsumer(final String systemName, final String pathToInputFile)
+  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
-    try{
-      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "HI"));
+
+    // TODO: Remove this after everything works, as it is just for debugging purposes.
+    try
+    {
+      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "THIS IS A TEST"));
     } catch (InterruptedException e)
     {
       e.printStackTrace();
     }
 
-    try
-    {
-      this.fileReader = new FileReader(pathToInputFile);
-    } catch (FileNotFoundException e)
-    {
-      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "file not found");
-      try
-      {
-        put(ssp, message);
-      } catch (InterruptedException e1)
-      {
-        e1.printStackTrace();
-      }
-    }
-
+    this.fileReader = new FileReader(pathToInputFile);
   }
 
   /**
-   * Not sure if this is entirely necessary for what I want to do. If it is, it's probably a big problem.
+   * The WikipediaSystem seemed fine by calling the superclasses' register implementation, and this System shouldn't need
+   * to deal with anything further here for now.
    */
   @Override
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
@@ -75,14 +66,14 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   }
 
   /**
-   * What is done at the initialisation of this SystemConsumer (?)
+   * Reads from the file in a BufferedReader, line-by-line, putting each line in an IncomingMessageEnvelope to be put
+   * on to their specified SystemStreamPartition.
+   * Once no more lines left to be read from the file, noMoreMessage is set to true via setIsAtHead() call.
    */
   @Override
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
-
-//    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
 
     String line;
     try
@@ -92,31 +83,19 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
         IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, line);
         put(ssp, message);
       }
-    } catch (IOException e)
+
+      setIsAtHead(ssp, true);
+    } catch (IOException e)   // TODO: Properly handle these Exceptions.
     {
-      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "can't read from file");
-      try
-      {
-        put(ssp, message);
-      } catch (InterruptedException e1)
-      {
-        e1.printStackTrace();
-      }
+      e.printStackTrace();
     } catch (InterruptedException e)
     {
-      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "");
-      try
-      {
-        put(ssp, message);
-      } catch (InterruptedException e1)
-      {
-        e1.printStackTrace();
-      }
+      e.printStackTrace();
     }
   }
 
   /**
-   * What is done at the destruction of this SystemConsumer (?)
+   * Frees access to file when done.
    */
   @Override
   public void stop()
@@ -129,6 +108,10 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
       e.printStackTrace();
     }
   }
+
+
+  // NOTE: No longer used since extending BlockingEnvelopeMap implementation of SystemConsumer. The logic previously
+  //        done in here is now in the start() method.
 
   /**
    * This logic should be called a number of times going by the method name "poll" (?).
