@@ -31,18 +31,32 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   private static final String STREAM_NAME = "test";
 
   private final SystemStreamPartition ssp;
-  private final Reader          fileReader;
-  private       BufferedReader  bufferedReader;
+  private       Reader                fileReader;
+  private       BufferedReader        bufferedReader;
 
   /**
    * Sets up the SystemStreamPartition and FileReader.
    */
-  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
+  public MedicalDataConsumer(final String systemName, final String pathToInputFile)
   {
-    this.fileReader = new FileReader(pathToInputFile);
-
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
+
+    try
+    {
+      this.fileReader = new FileReader(pathToInputFile);
+    } catch (FileNotFoundException e)
+    {
+      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "file not found");
+      try
+      {
+        put(ssp, message);
+      } catch (InterruptedException e1)
+      {
+        e1.printStackTrace();
+      }
+    }
+
   }
 
   /**
@@ -74,10 +88,24 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
       }
     } catch (IOException e)
     {
-      e.printStackTrace();
+      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "can't read from file");
+      try
+      {
+        put(ssp, message);
+      } catch (InterruptedException e1)
+      {
+        e1.printStackTrace();
+      }
     } catch (InterruptedException e)
     {
-      e.printStackTrace();
+      IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, "");
+      try
+      {
+        put(ssp, message);
+      } catch (InterruptedException e1)
+      {
+        e1.printStackTrace();
+      }
     }
   }
 

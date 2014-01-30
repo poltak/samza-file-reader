@@ -43,14 +43,7 @@ public class MedicalDataSystemFactory implements SystemFactory
   {
     // TODO: Don't actually hardcode this!!! Use systemName parameter
     String pathToInputFile = config.get("systems.medicaldata.inputpath");
-
-    try
-    {
-      return new MedicalDataConsumer(systemName, pathToInputFile);
-    } catch (FileNotFoundException e)
-    {
-      return null;
-    }
+    return new MedicalDataConsumer(systemName, pathToInputFile);
   }
 
   /**
