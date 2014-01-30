@@ -31,6 +31,13 @@ import java.io.FileNotFoundException;
 
 public class MedicalDataSystemFactory implements SystemFactory
 {
+  /**
+   * Gets SystemConsumers for the MedicalData system.
+   * @param systemName The name of the system (as defined in the config?).
+   * @param config Provides access to the properties file where variables for the System may be defined.
+   * @param metricsRegistry Unused for now (trying to get things working without worrying about metrics just yet).
+   * @return New SystemConsumer that converts the file contents into a Samza-compatible stream.
+   */
   @Override
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
@@ -46,12 +53,18 @@ public class MedicalDataSystemFactory implements SystemFactory
     }
   }
 
+  /**
+   * Unneeded as we just want to read from a file, rather than write.
+   */
   @Override
   public SystemProducer getProducer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
     throw new SamzaException("Cannot produce to read only data.");
   }
 
+  /**
+   * Not entirely sure what this does, although going by the hello-samza example, this should be fine.
+   */
   @Override
   public SystemAdmin getAdmin(final String systemName, final Config config)
   {

@@ -30,7 +30,6 @@ import java.util.Map;
 
 public class MedicalDataConsumer implements SystemConsumer
 {
-  // TODO: Don't actually hard-code these!!!; change them back after working
   private static final String SYSTEM_NAME = "medicaldata";
   private static final String STREAM_NAME = "test";
 
@@ -38,19 +37,29 @@ public class MedicalDataConsumer implements SystemConsumer
   private final Reader          fileReader;
   private       BufferedReader  bufferedReader;
 
+  /**
+   * Sets up the SystemStreamPartition and FileReader.
+   */
   public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
     this.fileReader = new FileReader(pathToInputFile);
 
+    // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
   }
 
+  /**
+   * What is done at the initialisation of this SystemConsumer (?)
+   */
   @Override
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
   }
 
+  /**
+   * What is done at the destruction of this SystemConsumer (?)
+   */
   @Override
   public void stop()
   {
@@ -63,11 +72,21 @@ public class MedicalDataConsumer implements SystemConsumer
     }
   }
 
+  /**
+   * Not sure if this is entirely necessary for what I want to do. If it is, it's probably a big problem.
+   */
   @Override
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
   {
   }
 
+  /**
+   * This logic should be called a number of times going by the method name "poll" (?).
+   * Should continue to read lines from file open in the Reader, adding that line to a new IncomingMessageEnvelope.
+   * @param systemStreamPartitionIntegerMap Not used in this example.
+   * @param l Not used in this example.
+   * @return List of IncomingMessageEnvelopes which are then put onto their specific SystemStreamPartition (?)
+   */
   @Override
   public List<IncomingMessageEnvelope> poll(final Map<SystemStreamPartition, Integer> systemStreamPartitionIntegerMap,
                                             final long l)
