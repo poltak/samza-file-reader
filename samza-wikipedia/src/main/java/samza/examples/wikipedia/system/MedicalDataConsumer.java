@@ -38,7 +38,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
    * Sets up the SystemStreamPartition and FileReader.
    * Also sends a test message saying "THIS IS A TEST" to the SSP.
    */
-  public MedicalDataConsumer(final String systemName, final String pathToInputFile)
+  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
   {
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
@@ -51,6 +51,8 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     {
       e.printStackTrace();
     }
+
+    this.fileReader = new FileReader(pathToInputFile);
   }
 
   /**
