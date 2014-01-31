@@ -31,19 +31,18 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   private static final String STREAM_NAME = "test";
 
   private final SystemStreamPartition ssp;
-  private final Reader                fileReader;
+  private       Reader                fileReader;
   private       BufferedReader        bufferedReader;
 
   /**
    * Sets up the SystemStreamPartition and FileReader.
    * Also sends a test message saying "THIS IS A TEST" to the SSP.
    */
-  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
+  public MedicalDataConsumer(final String systemName, final String pathToInputFile)
   {
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
 
-    this.fileReader = new FileReader(pathToInputFile);
   }
 
   /**
@@ -54,6 +53,15 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
   {
     super.register(systemStreamPartition, startingOffset);
+    String path = systemStreamPartition.getStream();
+
+    try
+    {
+      this.fileReader = new FileReader(path.split(".")[1]);
+    } catch (FileNotFoundException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   /**
