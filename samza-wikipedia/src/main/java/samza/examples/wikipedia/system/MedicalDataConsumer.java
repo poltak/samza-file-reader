@@ -42,16 +42,6 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   {
     // TODO: Don't actually hard-code these!!!; change them back after working
     this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
-
-    // TODO: Remove this after everything works, as it is just for debugging purposes.
-    try
-    {
-      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "THIS IS A TEST"));
-    } catch (InterruptedException e)
-    {
-      e.printStackTrace();
-    }
-
     this.fileReader = new FileReader(pathToInputFile);
   }
 
@@ -83,8 +73,6 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
         IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, line);
         put(ssp, message);
       }
-
-      setIsAtHead(ssp, true);
     } catch (IOException e)   // TODO: Properly handle these Exceptions.
     {
       e.printStackTrace();
