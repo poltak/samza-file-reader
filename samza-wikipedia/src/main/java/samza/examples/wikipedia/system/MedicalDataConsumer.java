@@ -18,7 +18,6 @@
  */
 package samza.examples.wikipedia.system;
 
-import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.util.BlockingEnvelopeMap;
@@ -27,21 +26,16 @@ import java.io.*;
 
 public class MedicalDataConsumer extends BlockingEnvelopeMap
 {
-  private static final String SYSTEM_NAME = "medicaldata";
-  private static final String STREAM_NAME = "test";
-
   private final SystemStreamPartition ssp;
   private final Reader                fileReader;
   private       BufferedReader        bufferedReader;
 
   /**
    * Sets up the SystemStreamPartition and FileReader.
-   * Also sends a test message saying "THIS IS A TEST" to the SSP.
    */
-  public MedicalDataConsumer(final String systemName, final String pathToInputFile) throws FileNotFoundException
+  public MedicalDataConsumer(final SystemStreamPartition ssp, final String pathToInputFile) throws FileNotFoundException
   {
-    // TODO: Don't actually hard-code these!!!; change them back after working
-    this.ssp = new SystemStreamPartition(SYSTEM_NAME, STREAM_NAME, new Partition(0));
+    this.ssp = ssp;
     this.fileReader = new FileReader(pathToInputFile);
   }
 
@@ -55,30 +49,18 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     super.register(systemStreamPartition, startingOffset);
   }
 
-  /**
-   * Reads from the file in a BufferedReader, line-by-line, putting each line in an IncomingMessageEnvelope to be put
-   * on to their specified SystemStreamPartition.
-   * Once no more lines left to be read from the file, noMoreMessage is set to true via setIsAtHead() call.
-   */
   @Override
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
 
-    String line;
     try
     {
-      while ((line = bufferedReader.readLine()) != null)
-      {
-        IncomingMessageEnvelope message = new IncomingMessageEnvelope(ssp, null, null, line);
-        put(ssp, message);
-      }
-    } catch (IOException e)   // TODO: Properly handle these Exceptions.
-    {
-      e.printStackTrace();
+      readInputFiles();
     } catch (InterruptedException e)
     {
-      e.printStackTrace();
+      e.getStackTrace();
+      stop();
     }
   }
 
@@ -97,35 +79,26 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     }
   }
 
-
-  // NOTE: No longer used since extending BlockingEnvelopeMap implementation of SystemConsumer. The logic previously
-  //        done in here is now in the start() method.
-
   /**
-   * This logic should be called a number of times going by the method name "poll" (?).
-   * Should continue to read lines from file open in the Reader, adding that line to a new IncomingMessageEnvelope.
-   * @param systemStreamPartitionIntegerMap Not used in this example.
-   * @param l Not used in this example.
-   * @return List of IncomingMessageEnvelopes which are then put onto their specific SystemStreamPartition (?)
+   * Reads from the file in a BufferedReader, line-by-line, putting each line in an IncomingMessageEnvelope to be put
+   * onto the specified SystemStreamPartition.
+   * Once there are no more lines to be read from the file, noMoreMessage is set to true via setIsAtHead() call.
    */
-//  @Override
-//  public List<IncomingMessageEnvelope> poll(final Map<SystemStreamPartition, Integer> systemStreamPartitionIntegerMap,
-//                                            final long l)
-//      throws InterruptedException
-//  {
-//    List<IncomingMessageEnvelope> list = new ArrayList<IncomingMessageEnvelope>();
-//
-//    String line;
-//    try
-//    {
-//      if ((line = bufferedReader.readLine()) != null)
-//      {
-//        list.add(new IncomingMessageEnvelope(ssp, "", null, line));
-//      }
-//    } catch (IOException e)
-//    {
-//      throw new InterruptedException(e.getMessage());
-//    }
-//    return list;
-//  }
+  private void readInputFiles() throws InterruptedException
+  {
+    String line;
+
+    try
+    {
+      while ((line = bufferedReader.readLine()) != null)
+      {
+        put(ssp, new IncomingMessageEnvelope(ssp, null, null, line));
+      }
+    } catch (IOException e)
+    {
+      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "ERROR: Cannot read from input file:\n" + e.getMessage()));
+    }
+
+    setIsAtHead(ssp, true);
+  }
 }
