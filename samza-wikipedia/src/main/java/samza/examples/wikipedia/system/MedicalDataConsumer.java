@@ -49,6 +49,9 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     super.register(systemStreamPartition, startingOffset);
   }
 
+  /**
+   * Constructs a new BufferedReader on the previously constructed FileReader and attempts to read in the input files.
+   */
   @Override
   public void start()
   {
@@ -82,7 +85,6 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   /**
    * Reads from the file in a BufferedReader, line-by-line, putting each line in an IncomingMessageEnvelope to be put
    * onto the specified SystemStreamPartition.
-   * Once there are no more lines to be read from the file, noMoreMessage is set to true via setIsAtHead() call.
    */
   private void readInputFiles() throws InterruptedException
   {
@@ -98,7 +100,5 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     {
       put(ssp, new IncomingMessageEnvelope(ssp, null, null, "ERROR: Cannot read from input file:\n" + e.getMessage()));
     }
-
-    setIsAtHead(ssp, true);
   }
 }
