@@ -18,7 +18,6 @@
  */
 package samza.examples.wikipedia.system;
 
-import org.apache.samza.Partition;
 import org.apache.samza.SamzaException;
 import org.apache.samza.config.Config;
 import org.apache.samza.metrics.MetricsRegistry;
@@ -29,8 +28,7 @@ import java.io.FileNotFoundException;
 
 public class MedicalDataSystemFactory implements SystemFactory
 {
-  private static final String CONFIG_PARAM_DELIMITER = ",";
-  private static final String CONFIG_PARAM_LEVEL_DELIMITER = ".";
+  private static final String OUTPUT_STREAM_NAME = "file-contents";
 
   /**
    * Gets SystemConsumers for the MedicalData system.
@@ -45,7 +43,7 @@ public class MedicalDataSystemFactory implements SystemFactory
 
     try
     {
-      return new MedicalDataConsumer(systemName, "test", pathToInputFile);
+      return new MedicalDataConsumer(systemName, OUTPUT_STREAM_NAME, pathToInputFile);
     } catch (FileNotFoundException e)
     {
       e.printStackTrace();
@@ -63,19 +61,5 @@ public class MedicalDataSystemFactory implements SystemFactory
   public SystemAdmin getAdmin(final String systemName, final Config config)
   {
     return new SinglePartitionSystemAdmin();
-  }
-
-  /**
-   * Gets the specified output stream for a SystemConsumer from the config file.
-   * @param config Provides access to the properties file where variables for the System may be defined.
-   * @return The name of the specified output stream as a String.
-   */
-  private static String getOutputStreamFromConfig(final Config config)
-  {
-    String outputStream = config.get("task.inputs");
-    //outputStream = outputStream.split(CONFIG_PARAM_DELIMITER)[0];
-    outputStream = outputStream.split(CONFIG_PARAM_LEVEL_DELIMITER)[1];
-
-    return outputStream;
   }
 }

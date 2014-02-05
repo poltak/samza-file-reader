@@ -32,7 +32,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   private       BufferedReader        bufferedReader;
 
   /**
-   * Sets up the SystemStreamPartition and FileReader.
+   * Sets up the SystemStreamPartition and FileReader to work with the specified system, stream and files.
    */
   public MedicalDataConsumer(final String systemName, final String streamName, final String pathToInputFile) throws FileNotFoundException
   {
@@ -40,10 +40,6 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     this.fileReader = new FileReader(pathToInputFile);
   }
 
-  /**
-   * The WikipediaSystem seemed fine by calling the superclasses' register implementation, and this System shouldn't need
-   * to deal with anything further here for now.
-   */
   @Override
   public void register(final SystemStreamPartition systemStreamPartition, final String startingOffset)
   {
