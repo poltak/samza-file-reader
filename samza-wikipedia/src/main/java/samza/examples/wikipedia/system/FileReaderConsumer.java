@@ -33,7 +33,6 @@ public class FileReaderConsumer extends BlockingEnvelopeMap {
      */
     private static final int BOUNDED_QUEUE_THRESHOLD = 100;
     private final SystemStreamPartition systemStreamPartition;
-    private final Reader fileReader;
     private final BufferedReader bufferedReader;
 
     /**
@@ -47,8 +46,7 @@ public class FileReaderConsumer extends BlockingEnvelopeMap {
     public FileReaderConsumer(final String systemName, final String streamName, final String pathToInputFile)
             throws FileNotFoundException {
         this.systemStreamPartition = new SystemStreamPartition(systemName, streamName, new Partition(0));
-        this.fileReader = new FileReader(pathToInputFile);
-        this.bufferedReader = new BufferedReader(fileReader);
+        this.bufferedReader = new BufferedReader(new FileReader(pathToInputFile));
     }
 
     @Override
