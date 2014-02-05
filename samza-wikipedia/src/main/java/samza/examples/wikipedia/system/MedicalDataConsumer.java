@@ -54,8 +54,27 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
-    Thread thread = new Thread(new ReadFile());
-    thread.start();
+
+    Thread fileReadingThread = new Thread(
+      new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          try
+          {
+            readInputFiles();
+            setIsAtHead(ssp, true);
+          } catch (InterruptedException e)
+          {
+            e.getStackTrace();
+            stop();
+          }
+        }
+      }
+    );
+
+    fileReadingThread.start();
   }
 
   /**
@@ -95,28 +114,28 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
 
 
 
-  private class ReadFile implements Runnable
-  {
-    /**
-     * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread causes
-     * the object's <code>run</code> method to be called in that separately executing thread.
-     * <p/>
-     * The general contract of the method <code>run</code> is that it may take any action whatsoever.
-     *
-     * @see Thread#run()
-     */
-    @Override
-    public void run()
-    {
-      try
-      {
-        readInputFiles();
-        setIsAtHead(ssp, true);
-      } catch (InterruptedException e)
-      {
-        e.getStackTrace();
-        stop();
-      }
-    }
-  }
+//  private class ReadFile implements Runnable
+//  {
+//    /**
+//     * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread causes
+//     * the object's <code>run</code> method to be called in that separately executing thread.
+//     * <p/>
+//     * The general contract of the method <code>run</code> is that it may take any action whatsoever.
+//     *
+//     * @see Thread#run()
+//     */
+//    @Override
+//    public void run()
+//    {
+//      try
+//      {
+//        readInputFiles();
+//        setIsAtHead(ssp, true);
+//      } catch (InterruptedException e)
+//      {
+//        e.getStackTrace();
+//        stop();
+//      }
+//    }
+//  }
 }
