@@ -24,20 +24,28 @@ import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.util.BlockingEnvelopeMap;
 
 import java.io.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MedicalDataConsumer extends BlockingEnvelopeMap
 {
-  private final SystemStreamPartition ssp;
+  private final SystemStreamPartition systemStreamPartition;
   private final Reader                fileReader;
-  private       BufferedReader        bufferedReader;
+  private final BufferedReader        bufferedReader;
 
   /**
-   * Sets up the SystemStreamPartition and FileReader to work with the specified system, stream and files.
+   * Sets up the SystemConsumer for reading from the specified file.
+   * @param systemName The name of this system.
+   * @param streamName The name of the stream upon which to place file contents.
+   * @param pathToInputFile The filesystem path to the file from which to read from.
+   * @throws FileNotFoundException Thrown if the <code>pathToInputFile</code> arg does not point to a readable file.
    */
-  public MedicalDataConsumer(final String systemName, final String streamName, final String pathToInputFile) throws FileNotFoundException
+  public MedicalDataConsumer(final String systemName, final String streamName, final String pathToInputFile)
+      throws FileNotFoundException
   {
-    this.ssp = new SystemStreamPartition(systemName, streamName, new Partition(0));
+    this.systemStreamPartition = new SystemStreamPartition(systemName, streamName, new Partition(0));
     this.fileReader = new FileReader(pathToInputFile);
+    this.bufferedReader = new BufferedReader(fileReader);
   }
 
   @Override
@@ -47,14 +55,13 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   }
 
   /**
-   * Constructs a new BufferedReader on the previously constructed FileReader and attempts to read in the input files.
+   * Constructs a new BufferedReader on the previously constructed FileReader and attempts to read in the input file.
+   * Reading from the file and placing the contents onto the SystemStreamPartition is done on a separate thread.
    * If the file read is successful, setIsHead() is called to specify that the SystemStreamPartition has "caught up".
    */
   @Override
   public void start()
   {
-    this.bufferedReader = new BufferedReader(fileReader);
-
     Thread fileReadingThread = new Thread(
       new Runnable()
       {
@@ -64,7 +71,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
           try
           {
             readInputFiles();
-            setIsAtHead(ssp, true);
+            setIsAtHead(systemStreamPartition, true);
           } catch (InterruptedException e)
           {
             e.getStackTrace();
@@ -95,6 +102,10 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   /**
    * Reads from the file in a BufferedReader, line-by-line, putting each line in an IncomingMessageEnvelope to be put
    * onto the specified SystemStreamPartition.
+   *
+   * Calling from a separate thread is advised.
+   * @throws InterruptedException Thrown if System is interrupted while attempting to place file contents onto the
+   * specified SystemStreamPartition.
    */
   private void readInputFiles() throws InterruptedException
   {
@@ -104,38 +115,29 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     {
       while ((line = bufferedReader.readLine()) != null)
       {
-        put(ssp, new IncomingMessageEnvelope(ssp, null, null, line));
+        put(systemStreamPartition, new IncomingMessageEnvelope(systemStreamPartition, null, null, line));
       }
     } catch (IOException e)
     {
-      put(ssp, new IncomingMessageEnvelope(ssp, null, null, "ERROR: Cannot read from input file:\n" + e.getMessage()));
+      put(systemStreamPartition, new IncomingMessageEnvelope(systemStreamPartition, null, null,
+                                                             "ERROR: Cannot read from input file:\n" + e.getMessage()));
     }
   }
 
 
+  /**
+   * Threshold used to determine when there are too many IncomingMessageEnvelopes to be put onto the BlockingQueue.
+   */
+  private static final int BOUNDED_QUEUE_THRESHOLD = 100;
 
-//  private class ReadFile implements Runnable
-//  {
-//    /**
-//     * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread causes
-//     * the object's <code>run</code> method to be called in that separately executing thread.
-//     * <p/>
-//     * The general contract of the method <code>run</code> is that it may take any action whatsoever.
-//     *
-//     * @see Thread#run()
-//     */
-//    @Override
-//    public void run()
-//    {
-//      try
-//      {
-//        readInputFiles();
-//        setIsAtHead(ssp, true);
-//      } catch (InterruptedException e)
-//      {
-//        e.getStackTrace();
-//        stop();
-//      }
-//    }
-//  }
+  /**
+   * Constructs a new bounded BlockingQueue of IncomingMessageEnvelopes. The bound is determined by the
+   * <code>BOUNDED_QUEUE_THRESHOLD</code> constant.
+   * @return A bounded queue used for queueing IncomingMessageEnvelopes to be sent to their specified destinations.
+   */
+  @Override
+  protected BlockingQueue<IncomingMessageEnvelope> newBlockingQueue()
+  {
+    return new LinkedBlockingQueue<IncomingMessageEnvelope>(BOUNDED_QUEUE_THRESHOLD);
+  }
 }

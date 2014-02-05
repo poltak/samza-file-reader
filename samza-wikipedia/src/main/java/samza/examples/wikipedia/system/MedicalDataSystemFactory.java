@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 
 public class MedicalDataSystemFactory implements SystemFactory
 {
+  /** Determines the name of the stream upon which the file contents will be placed. */
   private static final String OUTPUT_STREAM_NAME = "file-contents";
 
   /**
