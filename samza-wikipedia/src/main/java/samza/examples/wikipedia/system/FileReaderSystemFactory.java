@@ -26,7 +26,7 @@ import org.apache.samza.util.SinglePartitionSystemAdmin;
 
 import java.io.FileNotFoundException;
 
-public class MedicalDataSystemFactory implements SystemFactory
+public class FileReaderSystemFactory implements SystemFactory
 {
   /** Determines the name of the stream upon which the file contents will be placed. */
   private static final String OUTPUT_STREAM_NAME = "file-contents";
@@ -44,7 +44,7 @@ public class MedicalDataSystemFactory implements SystemFactory
 
     try
     {
-      return new MedicalDataConsumer(systemName, OUTPUT_STREAM_NAME, pathToInputFile);
+      return new FileReaderConsumer(systemName, OUTPUT_STREAM_NAME, pathToInputFile);
     } catch (FileNotFoundException e)
     {
       e.printStackTrace();

@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MedicalDataConsumer extends BlockingEnvelopeMap
+public class FileReaderConsumer extends BlockingEnvelopeMap
 {
   private final SystemStreamPartition systemStreamPartition;
   private final Reader                fileReader;
@@ -40,7 +40,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
    * @param pathToInputFile The filesystem path to the file from which to read from.
    * @throws FileNotFoundException Thrown if the <code>pathToInputFile</code> arg does not point to a readable file.
    */
-  public MedicalDataConsumer(final String systemName, final String streamName, final String pathToInputFile)
+  public FileReaderConsumer(final String systemName, final String streamName, final String pathToInputFile)
       throws FileNotFoundException
   {
     this.systemStreamPartition = new SystemStreamPartition(systemName, streamName, new Partition(0));
@@ -120,7 +120,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     } catch (IOException e)
     {
       put(systemStreamPartition, new IncomingMessageEnvelope(systemStreamPartition, null, null,
-                                                             "ERROR: Cannot read from input file:\n" + e.getMessage()));
+              "ERROR: Cannot read from input file:\n" + e.getMessage()));
     }
   }
 
