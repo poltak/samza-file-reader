@@ -48,21 +48,14 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
 
   /**
    * Constructs a new BufferedReader on the previously constructed FileReader and attempts to read in the input files.
+   * If the file read is successful, setIsHead() is called to specify that the SystemStreamPartition has "caught up".
    */
   @Override
   public void start()
   {
     this.bufferedReader = new BufferedReader(fileReader);
-
-    try
-    {
-      readInputFiles();
-      setIsAtHead(ssp, true);
-    } catch (InterruptedException e)
-    {
-      e.getStackTrace();
-      stop();
-    }
+    Thread thread = new Thread(new ReadFile());
+    thread.start();
   }
 
   /**
@@ -97,6 +90,33 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     } catch (IOException e)
     {
       put(ssp, new IncomingMessageEnvelope(ssp, null, null, "ERROR: Cannot read from input file:\n" + e.getMessage()));
+    }
+  }
+
+
+
+  private class ReadFile implements Runnable
+  {
+    /**
+     * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread causes
+     * the object's <code>run</code> method to be called in that separately executing thread.
+     * <p/>
+     * The general contract of the method <code>run</code> is that it may take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run()
+    {
+      try
+      {
+        readInputFiles();
+        setIsAtHead(ssp, true);
+      } catch (InterruptedException e)
+      {
+        e.getStackTrace();
+        stop();
+      }
     }
   }
 }
