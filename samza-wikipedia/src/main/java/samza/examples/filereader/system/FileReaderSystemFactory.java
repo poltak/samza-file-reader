@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package samza.examples.wikipedia.system;
+package samza.examples.filereader.system;
 
 import org.apache.samza.SamzaException;
 import org.apache.samza.config.Config;
