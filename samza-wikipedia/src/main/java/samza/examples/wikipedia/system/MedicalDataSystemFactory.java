@@ -45,7 +45,7 @@ public class MedicalDataSystemFactory implements SystemFactory
 
     try
     {
-      return new MedicalDataConsumer(systemName, getOutputStreamFromConfig(config), pathToInputFile);
+      return new MedicalDataConsumer(systemName, "test", pathToInputFile);
     } catch (FileNotFoundException e)
     {
       e.printStackTrace();

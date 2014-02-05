@@ -61,6 +61,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
     try
     {
       readInputFiles();
+      setIsAtHead(ssp, true);
     } catch (InterruptedException e)
     {
       e.getStackTrace();
