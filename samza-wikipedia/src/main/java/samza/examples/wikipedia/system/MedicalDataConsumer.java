@@ -18,6 +18,7 @@
  */
 package samza.examples.wikipedia.system;
 
+import org.apache.samza.Partition;
 import org.apache.samza.system.IncomingMessageEnvelope;
 import org.apache.samza.system.SystemStreamPartition;
 import org.apache.samza.util.BlockingEnvelopeMap;
@@ -33,9 +34,9 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
   /**
    * Sets up the SystemStreamPartition and FileReader.
    */
-  public MedicalDataConsumer(final SystemStreamPartition ssp, final String pathToInputFile) throws FileNotFoundException
+  public MedicalDataConsumer(final String systemName, final String streamName, final String pathToInputFile) throws FileNotFoundException
   {
-    this.ssp = new SystemStreamPartition(ssp);
+    this.ssp = new SystemStreamPartition(systemName, streamName, new Partition(0));
     this.fileReader = new FileReader(pathToInputFile);
   }
 

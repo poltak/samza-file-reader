@@ -41,12 +41,11 @@ public class MedicalDataSystemFactory implements SystemFactory
   @Override
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
-    SystemStreamPartition ssp = new SystemStreamPartition(systemName, getOutputStreamFromConfig(config), new Partition(0));
     String pathToInputFile = config.get("systems." + systemName + ".inputpath");
 
     try
     {
-      return new MedicalDataConsumer(ssp, pathToInputFile);
+      return new MedicalDataConsumer(systemName, getOutputStreamFromConfig(config), pathToInputFile);
     } catch (FileNotFoundException e)
     {
       e.printStackTrace();
