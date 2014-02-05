@@ -29,7 +29,6 @@ import java.io.FileNotFoundException;
 
 public class MedicalDataSystemFactory implements SystemFactory
 {
-  private static final String INPUT_FILE_CONFIG_PARAM = ".inputpath";
   private static final String CONFIG_PARAM_DELIMITER = ",";
   private static final String CONFIG_PARAM_LEVEL_DELIMITER = ".";
 
@@ -43,7 +42,7 @@ public class MedicalDataSystemFactory implements SystemFactory
   public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
     SystemStreamPartition ssp = new SystemStreamPartition(systemName, getOutputStreamFromConfig(config), new Partition(0));
-    String pathToInputFile = config.get("systems." + systemName + INPUT_FILE_CONFIG_PARAM);
+    String pathToInputFile = config.get("systems." + systemName + ".inputpath");
 
     try
     {
@@ -75,7 +74,7 @@ public class MedicalDataSystemFactory implements SystemFactory
   private static String getOutputStreamFromConfig(final Config config)
   {
     String outputStream = config.get("task.inputs");
-    outputStream = outputStream.split(CONFIG_PARAM_DELIMITER)[0];
+    //outputStream = outputStream.split(CONFIG_PARAM_DELIMITER)[0];
     outputStream = outputStream.split(CONFIG_PARAM_LEVEL_DELIMITER)[1];
 
     return outputStream;

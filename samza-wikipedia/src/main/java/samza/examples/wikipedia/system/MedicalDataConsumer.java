@@ -35,7 +35,7 @@ public class MedicalDataConsumer extends BlockingEnvelopeMap
    */
   public MedicalDataConsumer(final SystemStreamPartition ssp, final String pathToInputFile) throws FileNotFoundException
   {
-    this.ssp = ssp;
+    this.ssp = new SystemStreamPartition(ssp);
     this.fileReader = new FileReader(pathToInputFile);
   }
 
