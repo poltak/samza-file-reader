@@ -22,10 +22,15 @@ import org.apache.samza.util.BlockingEnvelopeMap;
 import samza.examples.databasereader.util.InvalidDbmsTypeException;
 import samza.examples.databasereader.util.SupportedDbmsTypes;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class DatabaseReaderConsumer extends BlockingEnvelopeMap
 {
-  private final String databaseUrl;
-  private final String dbmsDriver;
+  private final Connection databaseConnection;
+  private final Statement  statement;
 
   /**
    * Sets up the SystemConsumer for reading from the specified database.

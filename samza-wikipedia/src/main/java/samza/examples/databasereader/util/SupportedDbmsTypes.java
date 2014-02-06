@@ -23,4 +23,15 @@ public enum SupportedDbmsTypes
   {
     return driver;
   }
+
+  public static SupportedDbmsTypes getTypeFromString(String dbmsType) throws InvalidDbmsTypeException
+  {
+    if (dbmsType.equals(MYSQL.asString()))
+    {
+      return MYSQL;
+    } else
+    {
+      throw new InvalidDbmsTypeException();
+    }
+  }
 }

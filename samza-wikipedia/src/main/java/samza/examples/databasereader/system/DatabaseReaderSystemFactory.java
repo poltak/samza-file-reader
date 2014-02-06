@@ -26,6 +26,9 @@ import org.apache.samza.system.SystemConsumer;
 import org.apache.samza.system.SystemFactory;
 import org.apache.samza.system.SystemProducer;
 import org.apache.samza.util.SinglePartitionSystemAdmin;
+import samza.examples.databasereader.util.InvalidDbmsTypeException;
+
+import java.sql.SQLException;
 
 public class DatabaseReaderSystemFactory implements SystemFactory
 {
@@ -35,9 +38,10 @@ public class DatabaseReaderSystemFactory implements SystemFactory
   private static final String OUTPUT_STREAM_NAME = "query-output";
 
   private static DatabaseReaderParameters getParametersFromConfig(Config config, String systemName)
+      throws InvalidDbmsTypeException
   {
     String host = config.get("systems." + systemName + ".host");
-    String port = config.get("systems." + systemName + ".port");
+    int port = config.getInt("systems." + systemName + ".port");
     String username = config.get("systems." + systemName + ".username");
     String password = config.get("systems." + systemName + ".password");
     String dbmsType = config.get("systems." + systemName + ".dbms");
@@ -51,7 +55,14 @@ public class DatabaseReaderSystemFactory implements SystemFactory
   {
     final DatabaseReaderParameters params = getParametersFromConfig(config, systemName);
 
-    return new DatabaseReaderConsumer(systemName, OUTPUT_STREAM_NAME, params);
+    try
+    {
+      return new DatabaseReaderConsumer(systemName, OUTPUT_STREAM_NAME, params);
+    } catch (SQLException e)
+    {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   @Override
