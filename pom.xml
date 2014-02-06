@@ -8,14 +8,14 @@
   </prerequisites>
 
   <groupId>samza</groupId>
-  <artifactId>samza-example-parent</artifactId>
+  <artifactId>samza-parent</artifactId>
   <version>0.7.0</version>
   <packaging>pom</packaging>
   <name>Samza Parent</name>
   <description>
     Samza is a stream processing system. Think of it as Map-Reduce for streams.
   </description>
-  <url>https://github.com/linkedin/hello-samza</url>
+  <url>https://github.com/poltak/samza-file-reader</url>
 
   <dependencyManagement>
     <dependencies>
@@ -62,11 +62,6 @@
         <version>0.8.1-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>org.schwering</groupId>
-        <artifactId>irclib</artifactId>
-        <version>1.10</version>
-      </dependency>
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>1.6.2</version>
@@ -75,21 +70,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.6.2</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-jaxrs</artifactId>
-        <version>1.8.5</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.supercsv</groupId>
-        <artifactId>super-csv</artifactId>
-        <version>2.1.0</version>
-      </dependency>
-      <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.28</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -101,14 +81,14 @@
 
   <modules>
     <module>samza-job-package</module>
-    <module>samza-wikipedia</module>
+    <module>samza-file-reader</module>
   </modules>
 
   <developers>
     <developer>
-      <name>Chris Riccomini</name>
-      <email>criccomini@gmail.com</email>
-      <timezone>-8</timezone>
+      <name>Jonathan Poltak Samosir</name>
+      <email>jonathan.samosir@gmail.com</email>
+      <timezone>+10</timezone>
     </developer>
   </developers>
 
@@ -121,14 +101,14 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git://github.com/linkedin/hello-samza.git</connection>
-    <developerConnection>scm:git:git@github.com:linkedin/hello-samza.git</developerConnection>
-    <url>http://github.com/linkedin/hello-samza/</url>
+    <connection>scm:git:git://github.com/poltak/samza-file-reader.git</connection>
+    <developerConnection>scm:git:git@github.com:poltak/samza-file-reader.git</developerConnection>
+    <url>http://github.com/poltak/samza-file-reader/</url>
   </scm>
 
   <issueManagement>
     <system>github</system>
-    <url>http://github.com/linkedin/hello-samza/issues</url>
+    <url>http://github.com/poltak/samza-file-reader/issues</url>
   </issueManagement>
 
   <repositories>
