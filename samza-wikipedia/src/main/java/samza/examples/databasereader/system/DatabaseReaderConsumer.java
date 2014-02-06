@@ -40,14 +40,34 @@ public class DatabaseReaderConsumer extends BlockingEnvelopeMap
    * @param parameters
    */
   public DatabaseReaderConsumer(final String systemName, final String outputStreamName,
-                                final DatabaseReaderParameters parameters)
+                                final DatabaseReaderParameters parameters) throws SQLException
   {
-    databaseUrl =
+    String databaseUrl =
         "jdbc:" + parameters.getDbmsType() +
         "://" + parameters.getHost() +
         ":" + parameters.getPort() +
         "/" + parameters.getDatabaseName();
-    dbmsDriver = getDbmsDriverFromType(parameters.getDbmsType());
+    String dbmsDriver = parameters.getDbmsType().getDriver();
+
+    databaseConnection = DriverManager.getConnection(databaseUrl, parameters.getUsername(), parameters.getPassword());
+    statement = databaseConnection.createStatement();
+  }
+
+  @Override
+  public void start()
+  {
+  }
+
+  @Override
+  public void stop()
+  {
+    try
+    {
+      databaseConnection.close();
+    } catch (SQLException e)
+    {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -59,21 +79,12 @@ public class DatabaseReaderConsumer extends BlockingEnvelopeMap
   private static String getDbmsDriverFromType(String dbmsType) throws InvalidDbmsTypeException
   {
     if (dbmsType.equals(SupportedDbmsTypes.MYSQL.asString()))
+    {
       return SupportedDbmsTypes.MYSQL.getDriver();
-    // TODO: include more supported drivers
-    else
-      return null;
-  }
-
-  @Override
-  public void start()
-  {
-
-  }
-
-  @Override
-  public void stop()
-  {
-
+    } else
+    {
+      // TODO: include more supported drivers
+      throw new InvalidDbmsTypeException("Unknown DBMS type specified: " + dbmsType);
+    }
   }
 }
