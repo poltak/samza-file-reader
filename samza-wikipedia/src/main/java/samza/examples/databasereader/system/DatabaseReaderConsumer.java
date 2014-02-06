@@ -71,22 +71,4 @@ public class DatabaseReaderConsumer extends BlockingEnvelopeMap
       e.printStackTrace();
     }
   }
-
-  /**
-   * Switches between available JDBC drivers depending on the user specified DBMS type.
-   *
-   * @param dbmsType A String denoting the type of DBMS that the user has specified in the config.
-   * @return A valid
-   */
-  private static String getDbmsDriverFromType(String dbmsType) throws InvalidDbmsTypeException
-  {
-    if (dbmsType.equals(SupportedDbmsTypes.MYSQL.asString()))
-    {
-      return SupportedDbmsTypes.MYSQL.getDriver();
-    } else
-    {
-      // TODO: include more supported drivers
-      throw new InvalidDbmsTypeException("Unknown DBMS type specified: " + dbmsType);
-    }
-  }
 }
