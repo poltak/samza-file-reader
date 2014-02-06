@@ -3,26 +3,44 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>samza</groupId>
-    <artifactId>samza-parent</artifactId>
-    <version>0.7.0</version>
-  </parent>
+  <prerequisites>
+    <maven>3.0.0</maven>
+  </prerequisites>
 
+  <groupId>samza</groupId>
   <artifactId>samza-file-reader</artifactId>
+  <version>0.1</version>
+  <packaging>pom</packaging>
   <name>Samza File Reader</name>
-  <packaging>jar</packaging>
+  <description>
+    A Samza application to put file contents onto a Samza Stream.
+  </description>
+  <url>https://github.com/poltak/samza-file-reader</url>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.samza</groupId>
-      <artifactId>samza-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.samza</groupId>
+        <artifactId>samza-api</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <developers>
+    <developer>
+      <name>Jonathan Poltak Samosir</name>
+      <email>jonathan.samosir@gmail.com</email>
+      <timezone>+10</timezone>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
@@ -32,4 +50,14 @@
     </license>
   </licenses>
 
+  <scm>
+    <connection>scm:git:git://github.com/poltak/samza-file-reader.git</connection>
+    <developerConnection>scm:git:git@github.com:poltak/samza-file-reader.git</developerConnection>
+    <url>http://github.com/poltak/samza-file-reader/</url>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>http://github.com/poltak/samza-file-reader/issues</url>
+  </issueManagement>
 </project>
