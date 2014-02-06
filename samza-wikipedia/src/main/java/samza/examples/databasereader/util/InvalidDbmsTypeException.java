@@ -18,9 +18,7 @@
  */
 package samza.examples.databasereader.util;
 
-import org.apache.samza.SamzaException;
-
-public class InvalidDbmsTypeException extends SamzaException
+public class InvalidDbmsTypeException extends InvalidSystemParametersException
 {
   public InvalidDbmsTypeException(String message)
   {

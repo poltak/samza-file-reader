@@ -43,7 +43,7 @@ public class DatabaseReaderConsumer extends BlockingEnvelopeMap
                                 final DatabaseReaderParameters parameters)
       throws SQLException, ClassNotFoundException
   {
-    String databaseUrl =
+    final String databaseUrl =
         "jdbc:" + parameters.getDbmsType() +
         "://" + parameters.getHost() +
         ":" + parameters.getPort() +

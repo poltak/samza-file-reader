@@ -37,21 +37,28 @@ public class DatabaseReaderSystemFactory implements SystemFactory
    */
   private static final String OUTPUT_STREAM_NAME = "query-output";
 
-  private static DatabaseReaderParameters getParametersFromConfig(Config config, String systemName)
+  /**
+   * Gets user specified system parameters from a StreamTask's config file.
+   * @param config Object allowing access to user specified config file.
+   * @param systemName Name of this system.
+   * @return A DatabaseReaderParameters object, constructed with all the user specified system parameters.
+   * @throws InvalidDbmsTypeException Thrown if user specifies invalid DMBS type in the config file.
+   */
+  private static DatabaseReaderParameters getParametersFromConfig(final Config config, final String systemName)
       throws InvalidDbmsTypeException
   {
-    String host = config.get("systems." + systemName + ".host");
-    int port = config.getInt("systems." + systemName + ".port");
-    String username = config.get("systems." + systemName + ".username");
-    String password = config.get("systems." + systemName + ".password");
-    String dbmsType = config.get("systems." + systemName + ".dbms");
-    String databaseName = config.get("systems." + systemName + ".dbname");
+    final String host = config.get("systems." + systemName + ".host");
+    final int port = config.getInt("systems." + systemName + ".port");
+    final String username = config.get("systems." + systemName + ".username");
+    final String password = config.get("systems." + systemName + ".password");
+    final String dbmsType = config.get("systems." + systemName + ".dbms");
+    final String databaseName = config.get("systems." + systemName + ".dbname");
 
     return new DatabaseReaderParameters(host, port, username, password, dbmsType, databaseName);
   }
 
   @Override
-  public SystemConsumer getConsumer(String systemName, Config config, MetricsRegistry metricsRegistry)
+  public SystemConsumer getConsumer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
     final DatabaseReaderParameters params = getParametersFromConfig(config, systemName);
 
@@ -70,13 +77,13 @@ public class DatabaseReaderSystemFactory implements SystemFactory
   }
 
   @Override
-  public SystemProducer getProducer(String systemName, Config config, MetricsRegistry metricsRegistry)
+  public SystemProducer getProducer(final String systemName, final Config config, final MetricsRegistry metricsRegistry)
   {
     throw new SamzaException("Cannot produce to read only database.");
   }
 
   @Override
-  public SystemAdmin getAdmin(String systemName, Config config)
+  public SystemAdmin getAdmin(final String systemName, final Config config)
   {
     return new SinglePartitionSystemAdmin();
   }
