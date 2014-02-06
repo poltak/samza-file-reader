@@ -62,6 +62,10 @@ public class DatabaseReaderSystemFactory implements SystemFactory
     {
       e.printStackTrace();
       return null;
+    } catch (ClassNotFoundException e)
+    {
+      e.printStackTrace();
+      return null;
     }
   }
 

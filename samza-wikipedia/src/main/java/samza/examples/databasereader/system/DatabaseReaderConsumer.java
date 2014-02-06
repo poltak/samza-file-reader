@@ -40,14 +40,16 @@ public class DatabaseReaderConsumer extends BlockingEnvelopeMap
    * @param parameters
    */
   public DatabaseReaderConsumer(final String systemName, final String outputStreamName,
-                                final DatabaseReaderParameters parameters) throws SQLException
+                                final DatabaseReaderParameters parameters)
+      throws SQLException, ClassNotFoundException
   {
     String databaseUrl =
         "jdbc:" + parameters.getDbmsType() +
         "://" + parameters.getHost() +
         ":" + parameters.getPort() +
         "/" + parameters.getDatabaseName();
-    String dbmsDriver = parameters.getDbmsType().getDriver();
+
+    Class.forName(parameters.getDbmsType().getDriver());
 
     databaseConnection = DriverManager.getConnection(databaseUrl, parameters.getUsername(), parameters.getPassword());
     statement = databaseConnection.createStatement();

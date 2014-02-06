@@ -20,6 +20,7 @@ package samza.examples.databasereader.util;
 
 public enum SupportedDbmsTypes
 {
+  // Add supported DBMS types and their corresponding JDBC drivers here
   MYSQL   ("mysql", "com.mysql.jdbc.Driver");
 
 
