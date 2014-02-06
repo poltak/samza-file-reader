@@ -7,4 +7,5 @@ processed by a Samza StreamTask as per any other Samza compatible stream
 
 There is an example StreamTask configuration file included in this
 project for those interested in. The file is in the repo root named:
+
       file-reader-example.properties
