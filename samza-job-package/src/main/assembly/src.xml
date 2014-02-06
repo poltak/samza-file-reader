@@ -61,6 +61,11 @@
       <outputDirectory>config</outputDirectory>
       <filtered>true</filtered>
     </file>
+    <file>
+      <source>${basedir}/src/main/config/database-reader-feed.properties</source>
+      <outputDirectory>config</outputDirectory>
+      <filtered>true</filtered>
+    </file>
   </files>
   <dependencySets>
     <dependencySet>
